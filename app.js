@@ -7,11 +7,7 @@ $(document).ready(function () {
 
       console.log($('#salaryForm').serializeArray());
 
-      //appends object to DOM in .container - need to pull each object individually?
-      $('.container').append('<div class="new-employee"></div>');
-      var $el = $('.container').children().last();
-
-      $el.append('<p>Info:' + formObject + '</p>');
+      $('.container').on('click', '.delete', deleteClick);
 
       //strips form - creates an object with form info
       $.each($('#salaryForm').serializeArray(), function (i, field) {
@@ -21,7 +17,10 @@ $(document).ready(function () {
       //clears out the form
       $('#salaryForm').find('input[type=text]').val('');
       employeeArray.push(values);
+
       totalEmployeeSalary();
+      appendFormInfo();
+      counter++;
     });
 
   totalEmployeeSalary();
@@ -35,11 +34,28 @@ function totalEmployeeSalary() {
   var employeeSalary = 0;
   for (var i = 0; i < employeeArray.length; i++) {
     var employee = employeeArray[i];
-    employeeSalary += parseInt(employee.employeesalary);
+    employeeSalary += Math.round(parseInt(employee.employeesalary) / 12);
   }
 
   console.log(employeeSalary);
 
   //divides totalEmployeeSalary by 12 to get monthly salary - attaches to <p> shown in DOM
-  $('.total-employee-salary').text('Total Monthly Salary Paid: $' + Math.round(employeeSalary / 12));
+  $('.total-employee-salary').text('Total Monthly Salary Paid: $' + employeeSalary);
+}
+
+var counter = 0;
+
+function appendFormInfo() {
+  var employee = employeeArray[counter];
+  var allInfo = employee.firstname + ', ' + employee.lastname + ', ' + employee.employeeid + ', ' + employee.jobtitle + ', ' + employee.employeesalary;
+
+  $('.container').append('<div class="new-employee"></div>');
+  var $el = $('.container').children().last();
+
+  $el.append(allInfo);
+  $el.append("<button class='delete'>Delete</button>");
+}
+
+function deleteClick() {
+  $(this).parent().remove();
 }
